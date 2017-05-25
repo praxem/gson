@@ -108,6 +108,7 @@ public final class Gson {
   static final boolean DEFAULT_SERIALIZE_NULLS = false;
   static final boolean DEFAULT_COMPLEX_MAP_KEYS = false;
   static final boolean DEFAULT_SPECIALIZE_FLOAT_VALUES = false;
+  static final JsonGlobalContext DEFAULT_JSON_GLOBAL_CONTEXT = null;
 
   private static final TypeToken<?> NULL_KEY_SURROGATE = TypeToken.get(Object.class);
   private static final String JSON_NON_EXECUTABLE_PREFIX = ")]}'\n";
@@ -135,6 +136,7 @@ public final class Gson {
   private final boolean prettyPrinting;
   private final boolean lenient;
   private final JsonAdapterAnnotationTypeAdapterFactory jsonAdapterFactory;
+  private final JsonGlobalContext globalContext;
 
   /**
    * Constructs a Gson object with default configuration. The default configuration has the
@@ -175,7 +177,7 @@ public final class Gson {
         Collections.<Type, InstanceCreator<?>>emptyMap(), DEFAULT_SERIALIZE_NULLS,
         DEFAULT_COMPLEX_MAP_KEYS, DEFAULT_JSON_NON_EXECUTABLE, DEFAULT_ESCAPE_HTML,
         DEFAULT_PRETTY_PRINT, DEFAULT_LENIENT, DEFAULT_SPECIALIZE_FLOAT_VALUES,
-        LongSerializationPolicy.DEFAULT, Collections.<TypeAdapterFactory>emptyList());
+        LongSerializationPolicy.DEFAULT, Collections.<TypeAdapterFactory>emptyList(), null);
   }
 
   Gson(final Excluder excluder, final FieldNamingStrategy fieldNamingStrategy,
@@ -183,7 +185,7 @@ public final class Gson {
       boolean complexMapKeySerialization, boolean generateNonExecutableGson, boolean htmlSafe,
       boolean prettyPrinting, boolean lenient, boolean serializeSpecialFloatingPointValues,
       LongSerializationPolicy longSerializationPolicy,
-      List<TypeAdapterFactory> typeAdapterFactories) {
+      List<TypeAdapterFactory> typeAdapterFactories, JsonGlobalContext globalContext) {
     this.constructorConstructor = new ConstructorConstructor(instanceCreators);
     this.excluder = excluder;
     this.fieldNamingStrategy = fieldNamingStrategy;
@@ -192,6 +194,7 @@ public final class Gson {
     this.htmlSafe = htmlSafe;
     this.prettyPrinting = prettyPrinting;
     this.lenient = lenient;
+    this.globalContext = globalContext;
 
     List<TypeAdapterFactory> factories = new ArrayList<TypeAdapterFactory>();
 
@@ -802,7 +805,12 @@ public final class Gson {
     return target;
   }
 
-  /**
+  public JsonGlobalContext getGlobalContext()
+{
+	return globalContext;
+}
+
+/**
    * This method deserializes the Json read from the specified reader into an object of the
    * specified class. It is not suitable to use if the specified class is a generic type since it
    * will not have the generic type information because of the Type Erasure feature of Java.

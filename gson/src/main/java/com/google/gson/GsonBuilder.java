@@ -40,6 +40,7 @@ import static com.google.gson.Gson.DEFAULT_LENIENT;
 import static com.google.gson.Gson.DEFAULT_PRETTY_PRINT;
 import static com.google.gson.Gson.DEFAULT_SERIALIZE_NULLS;
 import static com.google.gson.Gson.DEFAULT_SPECIALIZE_FLOAT_VALUES;
+import static com.google.gson.Gson.DEFAULT_JSON_GLOBAL_CONTEXT;
 
 /**
  * <p>Use this builder to construct a {@link Gson} instance when you need to set configuration
@@ -94,7 +95,8 @@ public final class GsonBuilder {
   private boolean prettyPrinting = DEFAULT_PRETTY_PRINT;
   private boolean generateNonExecutableJson = DEFAULT_JSON_NON_EXECUTABLE;
   private boolean lenient = DEFAULT_LENIENT;
-
+  private JsonGlobalContext globalContext = DEFAULT_JSON_GLOBAL_CONTEXT;
+  
   /**
    * Creates a GsonBuilder instance that can be used to build Gson with various configuration
    * settings. GsonBuilder follows the builder pattern, and it is typically used by first
@@ -361,6 +363,11 @@ public final class GsonBuilder {
     prettyPrinting = true;
     return this;
   }
+  
+  public GsonBuilder setJsonGlobalContext(JsonGlobalContext globalContext) {
+	    this.globalContext = globalContext;
+	    return this;
+	  }
 
   /**
    * By default, Gson is strict and only accepts JSON as specified by
@@ -569,7 +576,7 @@ public final class GsonBuilder {
     return new Gson(excluder, fieldNamingPolicy, instanceCreators,
         serializeNulls, complexMapKeySerialization,
         generateNonExecutableJson, escapeHtmlChars, prettyPrinting, lenient,
-        serializeSpecialFloatingPointValues, longSerializationPolicy, factories);
+        serializeSpecialFloatingPointValues, longSerializationPolicy, factories, globalContext);
   }
 
   private void addTypeAdaptersForDate(String datePattern, int dateStyle, int timeStyle,

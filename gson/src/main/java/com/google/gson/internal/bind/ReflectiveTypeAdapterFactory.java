@@ -16,8 +16,19 @@
 
 package com.google.gson.internal.bind;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
+import com.google.gson.Initializer;
+import com.google.gson.JsonGlobalContext;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -32,14 +43,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Type adapter that reflects over the fields and methods of a class.
@@ -115,7 +118,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     if (mapped == null) mapped = context.getAdapter(fieldType);
 
     final TypeAdapter<?> typeAdapter = mapped;
-    return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize) {
+    return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize, context.getGlobalContext()) {
       @SuppressWarnings({"unchecked", "rawtypes"}) // the type adapter and field type always agree
       @Override void write(JsonWriter writer, Object value)
           throws IOException, IllegalAccessException {
@@ -181,11 +184,13 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     final String name;
     final boolean serialized;
     final boolean deserialized;
+    final JsonGlobalContext globalContext;
 
-    protected BoundField(String name, boolean serialized, boolean deserialized) {
+    protected BoundField(String name, boolean serialized, boolean deserialized, JsonGlobalContext globalContext) {
       this.name = name;
       this.serialized = serialized;
       this.deserialized = deserialized;
+      this.globalContext = globalContext;
     }
     abstract boolean writeField(Object value) throws IOException, IllegalAccessException;
     abstract void write(JsonWriter writer, Object value) throws IOException, IllegalAccessException;
@@ -208,12 +213,17 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       }
 
       T instance = constructor.construct();
+      JsonGlobalContext globalContext = null;
 
       try {
         in.beginObject();
         while (in.hasNext()) {
           String name = in.nextName();
           BoundField field = boundFields.get(name);
+          
+          if (globalContext == null)
+         	 globalContext = field.globalContext;
+          
           if (field == null || !field.deserialized) {
             in.skipValue();
           } else {
@@ -226,6 +236,10 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         throw new AssertionError(e);
       }
       in.endObject();
+      
+      if (instance instanceof Initializer)
+      	((Initializer)instance).initialize(globalContext);
+      
       return instance;
     }
 
