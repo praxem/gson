@@ -28,6 +28,7 @@ import java.util.Map;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.Initializer;
+import com.google.gson.InstanceInitializer;
 import com.google.gson.JsonGlobalContext;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
@@ -206,7 +207,8 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       this.boundFields = boundFields;
     }
 
-    @Override public T read(JsonReader in) throws IOException {
+    @SuppressWarnings("unchecked")
+   @Override public T read(JsonReader in) throws IOException {
       if (in.peek() == JsonToken.NULL) {
         in.nextNull();
         return null;
@@ -221,7 +223,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
           String name = in.nextName();
           BoundField field = boundFields.get(name);
           
-          if (globalContext == null)
+          if (globalContext == null && field != null)
          	 globalContext = field.globalContext;
           
           if (field == null || !field.deserialized) {
@@ -238,7 +240,20 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
       in.endObject();
       
       if (instance instanceof Initializer)
+      {
+      	if (globalContext == null)
+      		System.out.println("Warning - globalContext is null");
+      	
       	((Initializer)instance).initialize(globalContext);
+      }
+      
+      if (instance instanceof InstanceInitializer<?>)
+      {
+      	if (globalContext == null)
+      		System.out.println("Warning - globalContext is null");
+      	
+      	((InstanceInitializer<T>)instance).initialize(globalContext, instance);
+      }
       
       return instance;
     }

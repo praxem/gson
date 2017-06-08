@@ -18,6 +18,8 @@ package com.google.gson;
 
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
+import com.praxem.commons.utils.Amount;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -285,6 +287,10 @@ public abstract class JsonElement {
     throw new UnsupportedOperationException(getClass().getSimpleName());
   }
 
+  public Amount getAsAmount() {
+	    throw new UnsupportedOperationException(getClass().getSimpleName());
+	  }
+  
   /**
    * convenience method to get this element as a {@link BigInteger}.
    *

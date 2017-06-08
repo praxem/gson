@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.praxem.commons.utils.Amount;
+
 /**
  * A class representing an array type in Json. An array is a list of {@link JsonElement}s each of
  * which can be of a different type. This is an ordered list, meaning that the order in which
@@ -254,8 +256,19 @@ public final class JsonArray extends JsonElement implements Iterable<JsonElement
     }
     throw new IllegalStateException();
   }
+  
+  
 
-  /**
+  @Override
+  public Amount getAsAmount()
+  {
+	    if (elements.size() == 1) {
+	       return elements.get(0).getAsAmount();
+	     }
+	     throw new IllegalStateException();
+  }
+
+/**
    * convenience method to get this array as a {@link BigInteger} if it contains a single element.
    *
    * @return get this element as a {@link BigInteger} if it is single element array.

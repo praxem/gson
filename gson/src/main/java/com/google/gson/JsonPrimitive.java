@@ -21,6 +21,7 @@ import java.math.BigInteger;
 
 import com.google.gson.internal.$Gson$Preconditions;
 import com.google.gson.internal.LazilyParsedNumber;
+import com.praxem.commons.utils.Amount;
 
 /**
  * A class representing a Json primitive value. A primitive value
@@ -203,8 +204,16 @@ public final class JsonPrimitive extends JsonElement {
   public BigDecimal getAsBigDecimal() {
     return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
   }
+  
+  
 
-  /**
+  @Override
+  public Amount getAsAmount()
+  {	
+	  return value instanceof Amount ? (Amount) value : new Amount(value.toString());
+  }
+
+/**
    * convenience method to get this element as a {@link BigInteger}.
    *
    * @return get this element as a {@link BigInteger}.

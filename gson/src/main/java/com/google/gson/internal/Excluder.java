@@ -16,25 +16,26 @@
 
 package com.google.gson.internal;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.JsonGlobalContext;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.Since;
-import com.google.gson.annotations.Until;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.ExcludeWhenCleanSave;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.Since;
+import com.google.gson.annotations.Until;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.praxem.commons.utils.SaveMethod;
 
 /**
  * This class selects which fields and types to omit. It is configurable,
@@ -59,6 +60,7 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
   private boolean requireExpose;
   private List<ExclusionStrategy> serializationStrategies = Collections.emptyList();
   private List<ExclusionStrategy> deserializationStrategies = Collections.emptyList();
+  private SaveMethod saveMethod;
 
   @Override protected Excluder clone() {
     try {
@@ -106,11 +108,13 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
       result.deserializationStrategies
           = new ArrayList<ExclusionStrategy>(deserializationStrategies);
       result.deserializationStrategies.add(exclusionStrategy);
-    }
+    } 
     return result;
   }
 
   public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+    this.saveMethod = gson.getGlobalContext().getSaveMethod();
+	 
     Class<?> rawType = type.getRawType();
     final boolean skipSerialize = excludeClass(rawType, true);
     final boolean skipDeserialize = excludeClass(rawType, false);
@@ -149,6 +153,11 @@ public final class Excluder implements TypeAdapterFactory, Cloneable {
   }
 
   public boolean excludeField(Field field, boolean serialize) {
+	 ExcludeWhenCleanSave exAnnotation =  field.getAnnotation(ExcludeWhenCleanSave.class);
+	 if (serialize && saveMethod == SaveMethod.CLEAN && exAnnotation != null) {
+	    return true; 
+	 }
+	  
     if ((modifiers & field.getModifiers()) != 0) {
       return true;
     }

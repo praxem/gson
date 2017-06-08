@@ -55,6 +55,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
+import com.praxem.commons.utils.Amount;
 
 /**
  * This is the main class for using Gson. Gson is typically used by first constructing a
@@ -229,6 +230,7 @@ public final class Gson {
     factories.add(TypeAdapters.CHARACTER_FACTORY);
     factories.add(TypeAdapters.STRING_BUILDER_FACTORY);
     factories.add(TypeAdapters.STRING_BUFFER_FACTORY);
+    factories.add(TypeAdapters.newFactory(Amount.class, TypeAdapters.AMOUNT));
     factories.add(TypeAdapters.newFactory(BigDecimal.class, TypeAdapters.BIG_DECIMAL));
     factories.add(TypeAdapters.newFactory(BigInteger.class, TypeAdapters.BIG_INTEGER));
     factories.add(TypeAdapters.URL_FACTORY);
