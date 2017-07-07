@@ -96,6 +96,7 @@ public final class GsonBuilder {
   private boolean generateNonExecutableJson = DEFAULT_JSON_NON_EXECUTABLE;
   private boolean lenient = DEFAULT_LENIENT;
   private JsonGlobalContext globalContext = DEFAULT_JSON_GLOBAL_CONTEXT;
+  private boolean forDisplay = false;
   
   /**
    * Creates a GsonBuilder instance that can be used to build Gson with various configuration
@@ -364,6 +365,12 @@ public final class GsonBuilder {
     return this;
   }
   
+  public GsonBuilder forDisplay() {
+	    forDisplay = true;
+	    return this;
+	  }
+	  
+  
   public GsonBuilder setJsonGlobalContext(JsonGlobalContext globalContext) {
 	    this.globalContext = globalContext;
 	    return this;
@@ -576,7 +583,7 @@ public final class GsonBuilder {
     return new Gson(excluder, fieldNamingPolicy, instanceCreators,
         serializeNulls, complexMapKeySerialization,
         generateNonExecutableJson, escapeHtmlChars, prettyPrinting, lenient,
-        serializeSpecialFloatingPointValues, longSerializationPolicy, factories, globalContext);
+        serializeSpecialFloatingPointValues, longSerializationPolicy, factories, globalContext, forDisplay);
   }
 
   private void addTypeAdaptersForDate(String datePattern, int dateStyle, int timeStyle,
@@ -594,4 +601,14 @@ public final class GsonBuilder {
     factories.add(TreeTypeAdapter.newFactory(TypeToken.get(Timestamp.class), dateTypeAdapter));
     factories.add(TreeTypeAdapter.newFactory(TypeToken.get(java.sql.Date.class), dateTypeAdapter));
   }
+
+public boolean isForDisplay()
+{
+	return forDisplay;
+}
+
+public void setForDisplay(boolean forDisplay)
+{
+	this.forDisplay = forDisplay;
+}
 }

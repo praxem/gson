@@ -55,7 +55,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
-import com.praxem.commons.utils.Amount;
+//import com.praxem.accounting.objects.Amount;
 
 /**
  * This is the main class for using Gson. Gson is typically used by first constructing a
@@ -135,6 +135,7 @@ public final class Gson {
   private final boolean htmlSafe;
   private final boolean generateNonExecutableJson;
   private final boolean prettyPrinting;
+  private final boolean forDisplay;
   private final boolean lenient;
   private final JsonAdapterAnnotationTypeAdapterFactory jsonAdapterFactory;
   private final JsonGlobalContext globalContext;
@@ -178,7 +179,7 @@ public final class Gson {
         Collections.<Type, InstanceCreator<?>>emptyMap(), DEFAULT_SERIALIZE_NULLS,
         DEFAULT_COMPLEX_MAP_KEYS, DEFAULT_JSON_NON_EXECUTABLE, DEFAULT_ESCAPE_HTML,
         DEFAULT_PRETTY_PRINT, DEFAULT_LENIENT, DEFAULT_SPECIALIZE_FLOAT_VALUES,
-        LongSerializationPolicy.DEFAULT, Collections.<TypeAdapterFactory>emptyList(), null);
+        LongSerializationPolicy.DEFAULT, Collections.<TypeAdapterFactory>emptyList(), null, false);
   }
 
   Gson(final Excluder excluder, final FieldNamingStrategy fieldNamingStrategy,
@@ -186,7 +187,7 @@ public final class Gson {
       boolean complexMapKeySerialization, boolean generateNonExecutableGson, boolean htmlSafe,
       boolean prettyPrinting, boolean lenient, boolean serializeSpecialFloatingPointValues,
       LongSerializationPolicy longSerializationPolicy,
-      List<TypeAdapterFactory> typeAdapterFactories, JsonGlobalContext globalContext) {
+      List<TypeAdapterFactory> typeAdapterFactories, JsonGlobalContext globalContext, boolean forDisplay) {
     this.constructorConstructor = new ConstructorConstructor(instanceCreators);
     this.excluder = excluder;
     this.fieldNamingStrategy = fieldNamingStrategy;
@@ -196,6 +197,7 @@ public final class Gson {
     this.prettyPrinting = prettyPrinting;
     this.lenient = lenient;
     this.globalContext = globalContext;
+    this.forDisplay = forDisplay;
 
     List<TypeAdapterFactory> factories = new ArrayList<TypeAdapterFactory>();
 
@@ -230,7 +232,7 @@ public final class Gson {
     factories.add(TypeAdapters.CHARACTER_FACTORY);
     factories.add(TypeAdapters.STRING_BUILDER_FACTORY);
     factories.add(TypeAdapters.STRING_BUFFER_FACTORY);
-    factories.add(TypeAdapters.newFactory(Amount.class, TypeAdapters.AMOUNT));
+    //factories.add(TypeAdapters.newFactory(Amount.class, TypeAdapters.AMOUNT));
     factories.add(TypeAdapters.newFactory(BigDecimal.class, TypeAdapters.BIG_DECIMAL));
     factories.add(TypeAdapters.newFactory(BigInteger.class, TypeAdapters.BIG_INTEGER));
     factories.add(TypeAdapters.URL_FACTORY);
@@ -996,4 +998,9 @@ public final class Gson {
         .append("}")
         .toString();
   }
+
+public boolean isForDisplay()
+{
+	return forDisplay;
+}
 }

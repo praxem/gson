@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.praxem.commons.utils.Amount;
+//import com.praxem.accounting.objects.Amount;
 
 /**
  * A class representing an array type in Json. An array is a list of {@link JsonElement}s each of
@@ -259,14 +259,14 @@ public final class JsonArray extends JsonElement implements Iterable<JsonElement
   
   
 
-  @Override
+  /*@Override
   public Amount getAsAmount()
   {
 	    if (elements.size() == 1) {
 	       return elements.get(0).getAsAmount();
 	     }
 	     throw new IllegalStateException();
-  }
+  }*/
 
 /**
    * convenience method to get this array as a {@link BigInteger} if it contains a single element.

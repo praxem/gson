@@ -56,7 +56,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.praxem.commons.utils.Amount;
+//import com.praxem.accounting.objects.Amount;
 
 /**
  * Type adapters for basic types.
@@ -425,7 +425,7 @@ public final class TypeAdapters {
     }
   };
   
-  public static final TypeAdapter<Amount> AMOUNT = new TypeAdapter<Amount>() {
+  /*public static final TypeAdapter<Amount> AMOUNT = new TypeAdapter<Amount>() {
 	    @Override public Amount read(JsonReader in) throws IOException {
 	      if (in.peek() == JsonToken.NULL) {
 	        in.nextNull();
@@ -441,7 +441,7 @@ public final class TypeAdapters {
 	    @Override public void write(JsonWriter out, Amount value) throws IOException {
 	      out.value(value);
 	    }
-	  };
+	  };*/
   
   public static final TypeAdapter<BigInteger> BIG_INTEGER = new TypeAdapter<BigInteger>() {
     @Override public BigInteger read(JsonReader in) throws IOException {
